@@ -12,15 +12,20 @@ export default function MovieCard({ movie, onClick }) {
   return (
     <div className="cursor-pointer" onClick={() => onClick(movie)}>
       <div className="relative w-64 h-96">
-        <Image
-          src={imageUrl}
-          alt={truncatedTitle}
-          layout="responsive"
-          width={128}
-          height={192}
-          objectFit="cover"
-          className="rounded-md"
-        />
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={truncatedTitle}
+            layout="responsive"
+            width={128}
+            height={192}
+            objectFit="cover"
+            className="rounded-md"
+          />
+          ) : (
+          // Optionally, you can add a fallback component or content here
+          <div className="bg-gray-300 w-full h-full rounded-md"></div>
+        )}
         <HeartIcon />
       </div>
       <h3 className="text-white text-lg">{truncatedTitle}</h3>

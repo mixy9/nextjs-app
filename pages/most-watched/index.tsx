@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Layout, { siteTitle } from '../../app/components/Layout';
+import Layout from '../../app/components/Layout';
 import React, { useState } from 'react';
 import MovieList from '../../app/components/MovieList';
 import InfiniteScrollObserver from '../../app/components/InfiniteScrollObserver';
@@ -50,7 +50,7 @@ export default function MostWatched({
   return (
     <Layout>
       <Head>
-        <title>{siteTitle} - Most Watched Movies</title>
+        <title>Most Watched Movies</title>
       </Head>
       <h1 className="text-6xl font-bold mx-auto">Most Watched Movies</h1>
       <MovieList movies={mostWatchedMovies} />

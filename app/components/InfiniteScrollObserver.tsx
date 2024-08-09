@@ -2,9 +2,14 @@ import { useEffect, useRef } from 'react';
 
 const BOTTOM_FETCH_OFFSET_PERCENTAGE = 0.4; // 40%
 
-const InfiniteScrollObserver = ({ onIntersect }) => {
-  const observerRef = useRef(null);
-  const observerElementRef = useRef(null);
+// Define the type for the onIntersect prop
+interface InfiniteScrollObserverProps {
+  onIntersect: () => void;
+}
+
+const InfiniteScrollObserver = ({ onIntersect }: InfiniteScrollObserverProps) => {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const observerElementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const options = {
@@ -18,12 +23,16 @@ const InfiniteScrollObserver = ({ onIntersect }) => {
     }, options);
 
     if (observerElementRef.current) {
-      observerRef.current.observe(observerElementRef.current);
+      if ('observe' in observerRef.current) {
+        observerRef.current.observe(observerElementRef.current);
+      }
     }
 
     return () => {
       if (observerRef.current && observerElementRef.current) {
-        observerRef.current.unobserve(observerElementRef.current);
+        if ('unobserve' in observerRef.current) {
+          observerRef.current.unobserve(observerElementRef.current);
+        }
       }
       observerRef.current?.disconnect();
     };
