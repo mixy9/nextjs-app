@@ -4,10 +4,13 @@ import Layout from '../app/components/Layout';
 import React, { useEffect, useState } from 'react';
 import MovieList from '../app/components/MovieList';
 import MovieItem from '../app/components/MovieItem';
-
-export const BASE_URL = 'https://api.themoviedb.org/3';
-const MOVIES_BY_GENRE_URL = `https://api.themoviedb.org/3/discover/movie?api_key=a300ecd09165adc9d5756bea72c8642c&sort_by=popularity.asc&language=en-US&with_genres=`;
-const MOVIES_BY_PROVIDER_URL = `https://api.themoviedb.org/3/discover/movie?api_key=a300ecd09165adc9d5756bea72c8642c&sort_by=popularity.asc&language=en-US&with_watch_providers=`;
+import {
+  discoverMoviesByGenres,
+  discoverMoviesByProviders,
+  getGenres,
+  getProviders,
+  newestMovies,
+} from '../app/services/api/discoverMovies';
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
@@ -15,36 +18,37 @@ export default function Home() {
   const [genres, setGenres] = useState([]);
   const [moviesByGenre, setMoviesByGenre] = useState({});
   const [moviesByProvider, setMoviesByProvider] = useState({});
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch(
-      `${BASE_URL}/discover/movie?api_key=a300ecd09165adc9d5756bea72c8642c&language=en-US&sort_by=release_date.desc&primary_release_date.lte=YYYY-MM-DD&page=1`,
-    )
-      .then((response) => response.json())
-      .then((data) => setMovies(data.results))
-      .catch((error) =>
-        console.error('Error fetching NowPlaying most-watched', error),
-      );
+    const fetchMovies = async () => {
+      try {
+        const data = await newestMovies(1);
+        setMovies(data.slice(0, 10));
+      } catch (err) {
+        setError('Failed to load movies');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
   }, []);
 
   useEffect(() => {
-    fetch(
-      `${BASE_URL}/watch/providers/movie?api_key=a300ecd09165adc9d5756bea72c8642c`,
-    )
-      .then((response) => response.json())
-      .then((data) => setProviders(data.results.slice(0, 3)))
-      .catch((error) =>
-        console.error('Error fetching NowPlaying most-watched', error),
-      );
-  }, []);
+    const fetchGenresList = async () => {
+      try {
+        const data = await getGenres();
+        setGenres(data);
+      } catch (err) {
+        setError('Failed to load genres');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    fetch(
-      `${BASE_URL}/genre/movie/list?api_key=a300ecd09165adc9d5756bea72c8642c`,
-    )
-      .then((response) => response.json())
-      .then((data) => setGenres(data.genres.slice(0, 10)))
-      .catch((error) => console.error('Error fetching genres', error));
+    fetchGenresList();
   }, []);
 
   useEffect(() => {
@@ -52,15 +56,14 @@ export default function Home() {
       try {
         const moviesMap = {};
         for (const genre of genres) {
-          const response = await fetch(`${MOVIES_BY_GENRE_URL}${genre.id}`);
-          const data = await response.json();
-          moviesMap[genre.name] = data.results;
+          moviesMap[genre.name] = await discoverMoviesByGenres(genre.id, 1);
         }
-        console.log(moviesMap, 'moviesMap');
 
         setMoviesByGenre(moviesMap);
       } catch (error) {
-        console.error('Error fetching most-watched by genre:', error);
+        setError('Failed to load movies by genres');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -70,21 +73,35 @@ export default function Home() {
   }, [genres]);
 
   useEffect(() => {
+    const fetchProvidersList = async () => {
+      try {
+        const data = await getProviders();
+        setProviders(data.slice(0, 5));
+      } catch (err) {
+        setError('Failed to load providers list');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProvidersList();
+  }, []);
+
+  useEffect(() => {
     const fetchMoviesByProvider = async () => {
       try {
         const moviesMap = {};
         for (const provider of providers) {
-          const response = await fetch(
-            `${MOVIES_BY_PROVIDER_URL}${provider.provider_id}`,
-          );
-          const data = await response.json();
-          moviesMap[provider.provider_name] = data.results.slice(0, 3);
+          const data = await discoverMoviesByProviders(provider.provider_id,1);
+          moviesMap[provider.provider_name] = data.slice(0, 3);
         }
         console.log(moviesMap, 'moviesMap');
 
         setMoviesByProvider(moviesMap);
       } catch (error) {
-        console.error('Error fetching most-watched by genre:', error);
+        setError('Failed to load movies by providers');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -113,6 +130,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+
           <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
             {Object.keys(moviesByGenre).map((genreName) => (
               <div key={genreName}>
