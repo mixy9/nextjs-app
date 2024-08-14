@@ -5,9 +5,12 @@
 :root {
   --foreground-color: 241, 241, 241;
   --background-color: 0, 0, 0;
+  --scroller-bg-color: #315e71;
+  --scroller-color: #bada5500;
 }
 
 body {
   color: rgb(var(--foreground-color));
   background: var(--background-color);
+  scrollbar-color: var(--scroller-bg-color) var(--scroller-color);
 }

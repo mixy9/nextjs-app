@@ -1,151 +1,126 @@
 'use client';
 
-import Layout from '../app/components/Layout';
-import React, { useEffect, useState } from 'react';
-import MovieList from '../app/components/MovieList';
+import React from 'react';
+import useSWR from 'swr';
 import MovieItem from '../app/components/MovieItem';
 import {
   discoverMoviesByGenres,
   discoverMoviesByProviders,
   getGenres,
   getProviders,
-  newestMovies,
+  getNewestMovies,
 } from '../app/services/api/discoverMovies';
+import MovieHorizontalList from '../app/components/MovieHorizontalList';
 
-export default function Home() {
-  const [movies, setMovies] = useState([]);
-  const [providers, setProviders] = useState([]);
-  const [genres, setGenres] = useState([]);
-  const [moviesByGenre, setMoviesByGenre] = useState({});
-  const [moviesByProvider, setMoviesByProvider] = useState({});
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+export default function Home({ initialNewestMovies, initialGenres, initialProviders }) {
+  // Fetch new movies with SWR and revalidate on client side
+  const { data: newestMovies } = useSWR('/api/newest-movies', () => getNewestMovies(1), {
+    initialData: initialNewestMovies,
+    revalidateOnFocus: false,
+  });
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const data = await newestMovies(1);
-        setMovies(data.slice(0, 10));
-      } catch (err) {
-        setError('Failed to load movies');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch genres with SWR and revalidate on client side
+  const { data: genres } = useSWR('/api/genres', getGenres, {
+    initialData: initialGenres,
+    revalidateOnFocus: false,
+  });
 
-    fetchMovies();
-  }, []);
+  // Fetch providers with SWR and revalidate on client side
+  const { data: providers } = useSWR('/api/providers', getProviders, {
+    initialData: initialProviders,
+    revalidateOnFocus: false,
+  });
 
-  useEffect(() => {
-    const fetchGenresList = async () => {
-      try {
-        const data = await getGenres();
-        setGenres(data);
-      } catch (err) {
-        setError('Failed to load genres');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGenresList();
-  }, []);
-
-  useEffect(() => {
-    const fetchMoviesByGenre = async () => {
-      try {
+  // Fetch movies by genre
+  const { data: moviesByGenre } = useSWR(
+    genres ? ['/api/movies-by-genre', genres] : null,
+    () => {
+      const fetchMovies = async () => {
         const moviesMap = {};
-        for (const genre of genres) {
+        for (const genre of genres.slice(0, 5)) {
           moviesMap[genre.name] = await discoverMoviesByGenres(genre.id, 1);
         }
+        return moviesMap;
+      };
+      return fetchMovies();
+    },
+    { revalidateOnFocus: false }
+  );
 
-        setMoviesByGenre(moviesMap);
-      } catch (error) {
-        setError('Failed to load movies by genres');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (genres.length > 0) {
-      fetchMoviesByGenre();
-    }
-  }, [genres]);
-
-  useEffect(() => {
-    const fetchProvidersList = async () => {
-      try {
-        const data = await getProviders();
-        setProviders(data.slice(0, 5));
-      } catch (err) {
-        setError('Failed to load providers list');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProvidersList();
-  }, []);
-
-  useEffect(() => {
-    const fetchMoviesByProvider = async () => {
-      try {
+  // Fetch movies by provider
+  const { data: moviesByProvider } = useSWR(
+    providers ? ['/api/movies-by-provider', providers] : null,
+    () => {
+      const fetchMovies = async () => {
         const moviesMap = {};
-        for (const provider of providers) {
-          const data = await discoverMoviesByProviders(provider.provider_id,1);
+        for (const provider of providers.slice(0, 5)) {
+          const data = await discoverMoviesByProviders(provider.provider_id, 1);
           moviesMap[provider.provider_name] = data.slice(0, 3);
         }
-        console.log(moviesMap, 'moviesMap');
+        return moviesMap;
+      };
+      return fetchMovies();
+    },
+    { revalidateOnFocus: false }
+  );
 
-        setMoviesByProvider(moviesMap);
-      } catch (error) {
-        setError('Failed to load movies by providers');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (providers.length > 0) {
-      fetchMoviesByProvider();
-    }
-  }, [providers]);
+  if (!newestMovies || !genres || !providers || !moviesByGenre || !moviesByProvider) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <Layout home>
-      <div className="text-white">
-        <main className="flex flex-col items-center justify-center min-h-screen py-2">
-          <h1 className="text-6xl font-bold m-3">Newest Movies</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <h1 className="text-6xl font-bold m-3">Newest Movies</h1>
 
-          <MovieList movies={movies} />
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
-            {Object.keys(moviesByProvider).map((providerName) => (
-              <div key={providerName}>
-                <h2>{providerName} Movies</h2>
-                <div className="gap-5 flex">
-                  {moviesByProvider[providerName].map((movi) => (
-                    <MovieItem movie={movi} key={movi} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
-            {Object.keys(moviesByGenre).map((genreName) => (
-              <div key={genreName}>
-                <h2>{genreName} Movies</h2>
-                <div className="gap-5 flex">
-                  {moviesByGenre[genreName].map((movie) => (
-                    <MovieItem movie={movie} key={movie} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          {/*<MovieHorizontalList />*/}
-        </main>
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
+        <MovieHorizontalList movies={newestMovies} />
       </div>
-    </Layout>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
+        {Object.keys(moviesByProvider).map((providerName) => (
+          <div key={providerName}>
+            <h2>{providerName} Movies</h2>
+            <div className="gap-5 flex">
+              {moviesByProvider[providerName].map((movi) => (
+                <MovieItem movie={movi} key={movi.id} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
+        {Object.keys(moviesByGenre).map((genreName) => (
+          <div key={genreName}>
+            <h2>{genreName} Movies</h2>
+            <MovieHorizontalList movies={moviesByGenre[genreName]} />
+          </div>
+        ))}
+      </div>
+    </div>
   );
+}
+
+export async function getServerSideProps() {
+  try {
+    const initialNewestMovies = await getNewestMovies(1);
+    const initialGenres = await getGenres();
+    const initialProviders = await getProviders();
+
+    return {
+      props: {
+        initialNewestMovies: initialNewestMovies.slice(0, 10),
+        initialGenres: initialGenres.slice(0, 10),
+        initialProviders: initialProviders.slice(0, 5),
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        initialNewestMovies: [],
+        initialGenres: [],
+        initialProviders: [],
+      },
+    };
+  }
 }

@@ -1,35 +1,24 @@
 import api from '../api';
+import { Movie } from '../../types/Movie';
 
-type Movie = {
-  id: number;
-  title: string;
-  release_date: string;
-  overview: string;
-  poster_path: string;
-  backdrop_path: string;
-  vote_average: number;
-}
-
-type DiscoverMoviesResponse = {
+type DiscoverMovies = {
   page: number;
   results: Movie[];
   total_pages: number;
   total_results: number;
 }
 
-export const newestMovies = async (page: number): Promise<Movie[]> => {
+export const getNewestMovies = async (page: number): Promise<Movie[]> => {
   try {
-    const response = await api.get<DiscoverMoviesResponse>('/discover/movie', {
+    const response = await api.get<DiscoverMovies>('/discover/movie', {
       params: {
         sort_by: 'release_date.asc',
-        primary_release_date_lte: 'YYYY-MM-DD',
         page,
       },
     });
     return response.data.results;
   } catch (error) {
     console.error('Error fetching newest movies', error);
-    throw error;
   }
 };
 
@@ -44,7 +33,7 @@ export const getGenres = async (): Promise<Movie[]> => {
 
 export const getProviders = async (): Promise<Movie[]> => {
   try {
-    const response = await api.get<DiscoverMoviesResponse>('/watch/providers/movie');
+    const response = await api.get<DiscoverMovies>('/watch/providers/movie');
     return response.data.results;
   } catch (error) {
     console.error('Error fetching genres list', error);
@@ -53,7 +42,7 @@ export const getProviders = async (): Promise<Movie[]> => {
 
 export const discoverMoviesByGenres = async (genreId: string, page: number): Promise<Movie[]> => {
   try {
-    const response = await api.get<DiscoverMoviesResponse>('/discover/movie', {
+    const response = await api.get<DiscoverMovies>('/discover/movie', {
       params: {
         sort_by: 'popularity.asc',
         with_genres: genreId,
@@ -68,7 +57,7 @@ export const discoverMoviesByGenres = async (genreId: string, page: number): Pro
 
 export const discoverMoviesByProviders = async (providerId: string, page: number): Promise<Movie[]> => {
   try {
-    const response = await api.get<DiscoverMoviesResponse>('/discover/movie', {
+    const response = await api.get<DiscoverMovies>('/discover/movie', {
       params: {
         sort_by: 'popularity.asc',
         with_watch_providers: providerId,

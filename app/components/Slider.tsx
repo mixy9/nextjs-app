@@ -1,18 +1,19 @@
-// components/Slider.tsx
 import { useState, ChangeEvent } from 'react';
 
-// Define prop types for the Slider component
-interface SliderProps {
+type SliderProps = {
   min: number;
   max: number;
   step: number;
+  onValueChange: (value: number) => void;
 }
 
-const Slider = ({ min, max, step }: SliderProps) => {
+export default function Slider({ min, max, step, onValueChange }: SliderProps) {
   const [value, setValue] = useState<number>(min);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(event.target.value));
+    const newValue = Number(event.target.value);
+    setValue(newValue);
+    onValueChange(newValue);
   };
 
   return (
@@ -29,5 +30,3 @@ const Slider = ({ min, max, step }: SliderProps) => {
     </div>
   );
 };
-
-export default Slider;

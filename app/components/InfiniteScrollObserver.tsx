@@ -7,7 +7,7 @@ interface InfiniteScrollObserverProps {
   onIntersect: () => void;
 }
 
-const InfiniteScrollObserver = ({ onIntersect }: InfiniteScrollObserverProps) => {
+export default function InfiniteScrollObserver ({ onIntersect }: InfiniteScrollObserverProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const observerElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,5 +42,3 @@ const InfiniteScrollObserver = ({ onIntersect }: InfiniteScrollObserverProps) =>
     <div ref={observerElementRef} className="infinite-scroll-observer"></div>
   );
 };
-
-export default InfiniteScrollObserver;

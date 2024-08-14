@@ -1,60 +1,43 @@
-import React from 'react';
-import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-import 'react-horizontal-scrolling-menu/dist/styles.css';
+import React, { useRef, useState } from "react";
 import MovieItem from './MovieItem';
+import styles from '../styles/home.module.css'
 
-export default function MovieHorizontalList({ movies }) {
+export default function MovieHorizontalList({movies}) {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const containerRef = useRef();
+
+  // Function to handle scrolling when the button is clicked
+  const handleScroll = (scrollAmount) => {
+    // Calculate the new scroll position
+    const newScrollPosition = scrollPosition + scrollAmount;
+
+    // Update the state with the new scroll position
+    setScrollPosition(newScrollPosition);
+
+    // Access the container element and set its scrollLeft property
+    containerRef.current.scrollLeft = newScrollPosition;
+  };
+
   return (
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
-      <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
-        {movies.map((movie) => (
-          <MovieItem movie={movie} key={movie} />
-        ))}
-      </ScrollMenu>
+    <div className="flex relative justify-center">
+      <button className={`absolute ${styles.actionButton} left-0 z-10`} onClick={() => handleScroll(-200)}>Scroll Left</button>
+
+      <div
+        ref={containerRef}
+        style={{
+          overflowX: "scroll",
+          scrollBehavior: "smooth",
+        }}
+      >
+        <div className="flex w-full gap-5">
+          {movies.map((movie) => (
+            <MovieItem movie={movie} key={movie.id} />
+          ))}
+        </div>
+      </div>
+
+      <button className={`absolute ${styles.actionButton} right-0 z-10`} onClick={() => handleScroll(200)}>Scroll Right</button>
     </div>
   );
 }
-
-const LeftArrow = () => {
-  const { isFirstItemVisible, scrollPrev } =
-    React.useContext(VisibilityContext);
-
-  return (
-    <Arrow
-      disabled={isFirstItemVisible}
-      onClick={() => scrollPrev()}
-      className="left"
-    >
-      Left
-    </Arrow>
-  );
-};
-
-const RightArrow = () => {
-  const { isLastItemVisible, scrollNext } = React.useContext(VisibilityContext);
-
-  return (
-    <Arrow
-      disabled={isLastItemVisible}
-      onClick={() => scrollNext()}
-      className="right"
-    >
-      Right
-    </Arrow>
-  );
-};
-
-const Arrow = ({ children, disabled, onClick, className }) => (
-  <button
-    disabled={disabled}
-    onClick={onClick}
-    className={className}
-    style={{
-      opacity: disabled ? 0.3 : 1,
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      margin: '0 5px',
-    }}
-  >
-    {children}
-  </button>
-);

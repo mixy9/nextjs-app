@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Create an Axios instance
+// Creating an Axios instance
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
@@ -9,7 +9,8 @@ const api = axios.create({
   params: {
     api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
     language: 'en-US',
-    watch_region: 'US',
+    watch_region: 'US', // US has more data
+    include_adult: 'false',
   },
 });
 
