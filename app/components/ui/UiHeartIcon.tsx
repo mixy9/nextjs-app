@@ -1,3 +1,5 @@
+'use client';
+
 const HeartIcon = ({onClick, active}) => (
   <button
     onClick={onClick}>

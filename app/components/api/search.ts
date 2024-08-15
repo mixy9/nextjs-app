@@ -1,11 +1,11 @@
-import { Movie } from '../../types/Movie';
-import api from '../api';
+import { Movie } from '../../app/types/Movie'
+import api from './api'
 
 type SearchMovies = {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
+  page: number
+  results: Movie[]
+  total_pages: number
+  total_results: number
 }
 
 export const searchMovies = async (searchQuery: string): Promise<Movie[]> => {
@@ -14,9 +14,9 @@ export const searchMovies = async (searchQuery: string): Promise<Movie[]> => {
       params: {
         query: searchQuery,
       },
-    });
-    return response.data.results;
+    })
+    return response.data.results
   } catch (error) {
-    console.error('Error searching movies', error);
+    console.error('Error searching movies', error)
   }
-};
+}

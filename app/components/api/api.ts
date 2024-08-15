@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 // Creating an Axios instance
 const api = axios.create({
@@ -12,24 +12,24 @@ const api = axios.create({
     watch_region: 'US', // US has more data
     include_adult: 'false',
   },
-});
+})
 
 api.interceptors.request.use(
   (config) => {
-    return config;
+    return config
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 api.interceptors.response.use(
   (response) => {
-    return response;
+    return response
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
-export default api;
+export default api
