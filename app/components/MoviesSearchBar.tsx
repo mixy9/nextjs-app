@@ -12,7 +12,7 @@ import useSWR from 'swr'
 import { searchMovies } from './api/search'
 import UiButton from './ui/UiButton'
 import { Movie } from '../types/Movie'
-import { debounce, useDebounce } from '../helpers'
+import { useDebounce } from '../helpers'
 
 const fetchMovies = async (query: string): Promise<Movie[]> => {
   const res = await searchMovies(query)

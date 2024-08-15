@@ -18,11 +18,11 @@ export default function MovieHorizontalList({ movies }: MovieHorizontalList) {
   const handleScroll = (scrollAmount: number) => {
     const newScrollPosition = scrollPosition + scrollAmount
 
-    // Update the state with the new scroll position
     setScrollPosition(newScrollPosition)
 
-    // Access the container element and set its scrollLeft property
-    containerRef.current.scrollLeft = newScrollPosition
+    if (containerRef.current && 'scrollLeft' in containerRef.current) {
+      containerRef.current.scrollLeft = newScrollPosition
+    }
   }
 
   const handleMouseEnter = () => {

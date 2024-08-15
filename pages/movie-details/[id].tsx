@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import { Genre, Movie } from '../../app/types/Movie'
-import { getMovie } from '../../app/components/api/movie'
+import { getMovie } from '../../app/components/api/movieDetailsApi'
+import UiHeartIcon from '../../app/components/ui/UiHeartIcon'
 
 type MovieDetailsProps = {
-  movie: Pick<Movie, { formattedReleaseDate: string }>
+  movie: Movie
 }
 
 export async function getServerSideProps({
@@ -13,7 +14,7 @@ export async function getServerSideProps({
   params: { id: string }
 }) {
   const { id } = params
-  const movie = await getMovie(id)
+  const movie = (await getMovie(id)) as Movie
 
   // Format the release date on the server side
   const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString()
@@ -93,6 +94,11 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
                 <li>Rating: {movie.vote_average} / 10</li>
               </ul>
             </div>
+          </div>
+
+          {/* Favorite */}
+          <div className="md:ml-8 md:w-3/3">
+            <UiHeartIcon movie={movie} size={35} />
           </div>
         </div>
       </div>

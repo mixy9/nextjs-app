@@ -4,17 +4,17 @@ import { MoviesListResponse } from '../../types/Response'
 
 type Filters = {
   releaseYear?: number
-  rating?: number
+  rating: number
   genres?: string
 }
 
-type MostWatchedMoviesParams = {
-  filters?: Filters | null
+export type MostWatchedMoviesParams = {
+  filters: Filters
   page?: number
 }
 
 export const mostWatchedMoviesFilter = async ({
-  filters = null,
+  filters,
   page = 1,
 }: MostWatchedMoviesParams): Promise<MoviesListResponse | unknown> => {
   try {
@@ -22,10 +22,10 @@ export const mostWatchedMoviesFilter = async ({
       params: {
         sort_by: 'popularity.asc',
         page,
-        primary_release_year: filters.releaseYear ?? '',
-        'vote_average.gte': filters.rating ?? null,
-        'vote_average.lte': filters.rating ?? null,
-        with_genres: filters.genres ?? null,
+        primary_release_year: filters.releaseYear,
+        'vote_average.gte': filters.rating,
+        'vote_average.lte': filters.rating,
+        with_genres: filters.genres,
       },
     })
     return response.data

@@ -1,35 +1,52 @@
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { searchMovies } from '../../app/services/api/search';
+import { searchMovies } from '../../app/components/api/search'
+import { Movie } from '../../app/types/Movie'
+import MovieList from '../../app/components/MovieList'
+import { GetServerSidePropsContext } from 'next'
 
-export default function SearchDetails() {
-  const router = useRouter();
-  const { q } = router.query; // Get query from the URL
+type SearchDetailsProps = {
+  movies: Movie[]
+  query: string
+}
 
-  // Custom fetcher function that calls your API service
-  const fetcher = (query) => searchMovies(query);
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { query } = context.query
 
-  // Only run the SWR fetch if `q` exists
-  const { data, error } = useSWR(q ? [q] : null, fetcher, { revalidateOnFocus: false });
+  // If there's no query, return an empty list of movies
+  if (!query) {
+    return {
+      props: {
+        movies: [],
+        query: null,
+      },
+    }
+  }
 
-  // Handle loading state
-  if (!data && !error) return <div>Loading...</div>;
+  let movies: Movie[] | undefined = []
+  try {
+    movies = await searchMovies(query as string)
+    // Log the result for debugging
+    console.log('Movies returned from API:', movies)
+  } catch (error) {
+    console.error('Failed to fetch movies:', error)
+  }
 
-  // Handle error state
-  if (error) return <div>Failed to load data</div>;
+  return {
+    props: {
+      movies: movies || [],
+      query: query || null,
+    },
+  }
+}
 
-  const movies = data || [];
-
-  console.log(q, 'llalala');
-
+export default function SearchDetails({ movies, query }: SearchDetailsProps) {
   return (
     <div>
-      <h1>Search Results for</h1>
-      <ul>
-        {movies.map((movie) => (
-          <li key={movie.id}>{movie.title}</li>
-        ))}
-      </ul>
+      <h1>Search Results for {query || 'your search'}</h1>
+      {movies.length > 0 ? (
+        <MovieList movies={movies} />
+      ) : (
+        <div>No results found</div>
+      )}
     </div>
-  );
+  )
 }

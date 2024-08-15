@@ -1,44 +1,45 @@
-import { useEffect, useRef } from 'react';
+'use client'
 
-const BOTTOM_FETCH_OFFSET_PERCENTAGE = 0.4; // 40%
+import { useEffect, useRef } from 'react'
 
-// Define the type for the onIntersect prop
+const BOTTOM_FETCH_OFFSET_PERCENTAGE = 0.4 // 40%
+
 interface InfiniteScrollObserverProps {
-  onIntersect: () => void;
+  onIntersect: () => void
 }
 
-export default function InfiniteScrollObserver ({ onIntersect }: InfiniteScrollObserverProps) {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const observerElementRef = useRef<HTMLDivElement | null>(null);
+export default function InfiniteScrollObserver({
+  onIntersect,
+}: InfiniteScrollObserverProps) {
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const observerElementRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    const currentObserverElement = observerElementRef.current
+
     const options = {
       rootMargin: `${window.innerHeight * BOTTOM_FETCH_OFFSET_PERCENTAGE}px`,
-    };
+    }
 
     observerRef.current = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        onIntersect();
+        onIntersect()
       }
-    }, options);
+    }, options)
 
-    if (observerElementRef.current) {
-      if ('observe' in observerRef.current) {
-        observerRef.current.observe(observerElementRef.current);
-      }
+    if (currentObserverElement && observerRef.current) {
+      observerRef.current.observe(currentObserverElement)
     }
 
     return () => {
-      if (observerRef.current && observerElementRef.current) {
-        if ('unobserve' in observerRef.current) {
-          observerRef.current.unobserve(observerElementRef.current);
-        }
+      if (currentObserverElement && observerRef.current) {
+        observerRef.current.unobserve(currentObserverElement)
       }
-      observerRef.current?.disconnect();
-    };
-  }, [onIntersect]);
+      observerRef.current?.disconnect()
+    }
+  }, [onIntersect])
 
   return (
     <div ref={observerElementRef} className="infinite-scroll-observer"></div>
-  );
-};
+  )
+}
