@@ -1,28 +1,42 @@
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { Movie } from '../../app/types/Movie';
-import { getMovie } from '../../app/services/api/movie';
+import { useRouter } from 'next/router'
+import Image from 'next/image'
+import { Genre, Movie } from '../../app/types/Movie'
+import { getMovie } from '../../app/components/api/movie'
 
-export async function getServerSideProps({ params }) {
-  const { id } = params;
-  const movie = await getMovie(id);
+type MovieDetailsProps = {
+  movie: Pick<Movie, { formattedReleaseDate: string }>
+}
+
+export async function getServerSideProps({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const { id } = params
+  const movie = await getMovie(id)
+
+  // Format the release date on the server side
+  const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString()
 
   return {
     props: {
-      movie,
+      movie: {
+        ...movie,
+        formattedReleaseDate,
+      },
     },
-  };
+  }
 }
 
-export default function MovieDetails({ movie }: Movie) {
-  const router = useRouter();
+export default function MovieDetails({ movie }: MovieDetailsProps) {
+  const router = useRouter()
 
   if (router.isFallback) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
+    <div className="min-h-screen w-full">
       {/* Banner Image with Gradient */}
       <div
         className="relative h-96 bg-cover bg-center"
@@ -31,12 +45,16 @@ export default function MovieDetails({ movie }: Movie) {
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
-        <div className="absolute bottom-0 left-0 p-8">
+        <div className="absolute bottom-0 left-0 p-8 w-full">
           <h1 className="text-5xl font-bold">{movie.title}</h1>
-          <p className="text-lg mt-4">
-            {new Date(movie.release_date).getFullYear()} | {movie.runtime} min |{' '}
-            {movie.genres.map((genre) => genre.name).join(', ')}
-          </p>
+          <div className="flex justify-between items-center">
+            <p className="text-lg mt-4">
+              {new Date(movie.release_date).getFullYear()} | {movie.runtime} min
+            </p>
+            <p className="text-lg mt-4 opacity-75">
+              {movie.genres.map((genre: Genre) => genre.name).join(', ')}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -46,7 +64,12 @@ export default function MovieDetails({ movie }: Movie) {
           {/* Poster Image */}
           <div className="md:w-1/3 mb-6 md:mb-0">
             <Image
-              src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/logo.png'}
+              layout="responsive"
+              src={
+                movie.poster_path
+                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                  : '/logo.png'
+              }
               alt={movie.title}
               width={500}
               height={750}
@@ -66,7 +89,7 @@ export default function MovieDetails({ movie }: Movie) {
               <ul className="text-lg text-gray-400">
                 <li>Budget: ${movie.budget.toLocaleString()}</li>
                 <li>Revenue: ${movie.revenue.toLocaleString()}</li>
-                <li>Release Date: {new Date(movie.release_date).toLocaleDateString()}</li>
+                <li>Release Date: {movie.formattedReleaseDate}</li>
                 <li>Rating: {movie.vote_average} / 10</li>
               </ul>
             </div>
@@ -74,5 +97,5 @@ export default function MovieDetails({ movie }: Movie) {
         </div>
       </div>
     </div>
-  );
+  )
 }

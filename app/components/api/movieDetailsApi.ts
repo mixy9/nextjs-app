@@ -1,4 +1,4 @@
-import { Movie } from '../../app/types/Movie'
+import { Movie } from '../../types/Movie'
 import api from './api'
 
 export const getMovie = async (movieId: string): Promise<Movie | unknown> => {
@@ -7,6 +7,6 @@ export const getMovie = async (movieId: string): Promise<Movie | unknown> => {
 
     return response.data
   } catch (error) {
-    console.error('Error fetching movie', error)
+    console.error('Error fetching movie-details', error)
   }
 }

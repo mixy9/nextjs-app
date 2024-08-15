@@ -1,71 +1,47 @@
-'use client';
+import Image from 'next/image'
+import Link from 'next/link'
+import UiHeartIcon from './ui/UiHeartIcon'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { Movie } from '../types/Movie'
 
-import Image from 'next/image';
-import Link from 'next/link';
-import HeartIcon from './icons/HeartIcon';
-import { useEffect, useState } from 'react';
-import { Movie } from '../types/Movie';
-
-type MovieCardProps = {
-  movie: Movie;
+type MovieItem = {
+  movie: Movie
 }
 
-export default function MovieItem({ movie }: MovieCardProps) {
-  const fallbackImageUrl = '/logo.png';
-  const imageUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : fallbackImageUrl;
+export default function MovieItem({ movie }: MovieItem) {
+  const fallbackImageUrl = '/logo.png'
+  const imageUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : fallbackImageUrl
 
   const truncatedTitle =
-    movie.title.length > 25
-      ? movie.title.substring(0, 25) + '...'
-      : movie.title;
-
-  const [isActive, setIsActive] = useState(false);
-
-  useEffect(() => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-    // Check if the current movie is in the stored favorites
-    const isFavorite = storedFavorites.some((fav: { id: number }) => fav.id === movie.id);
-    setIsActive(isFavorite);
-  }, [movie.id]);
-
-  const handleFavoriteToggle = () => {
-    const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
-    if (Array.isArray(storedFavorites)) {
-      if (isActive) {
-        const newFavorites = storedFavorites.filter((fav: { id: number }) => fav.id !== movie.id);
-
-        localStorage.setItem('favorites', JSON.stringify(newFavorites));
-        setIsActive(false);
-      } else {
-        storedFavorites.push({ id: movie.id, title: movie.title });
-        localStorage.setItem('favorites', JSON.stringify(storedFavorites));
-        setIsActive(true);
-      }
-    }
-  };
+    movie.title.length > 25 ? movie.title.substring(0, 25) + '...' : movie.title
 
   return (
-    <Link href={{
-      pathname: `/movie/[id]`,
-      query: { id: movie.id },
-    }}>
-      <div className={`relative w-64 h-96 flex justify-center items-center overflow-hidden ${
-        !movie.poster_path ? 'p-10' : ''
-      }`}>
+    <Link
+      href={{
+        pathname: `/movie-details/[id]`,
+        query: { id: movie.id },
+      }}
+    >
+      <div
+        className={`relative w-56 h-80 bg-gray-800 rounded-md flex justify-center items-center overflow-hidden ${
+          !movie.poster_path ? 'p-10' : ''
+        }`}
+      >
         <Image
+          layout="responsive"
           src={imageUrl}
           alt={truncatedTitle}
-          layout="responsive"
-          width={256}
-          height={384}
+          width={226}
+          height={354}
           objectFit="cover"
-          className="rounded-md"
         />
-        <HeartIcon onClick={(e) => { e.preventDefault(); handleFavoriteToggle(); }} active={isActive} />
+        <div className="absolute m-2 top-0 right-0">
+          <UiHeartIcon movie={movie} size={25} />
+        </div>
       </div>
       <h3 className="text-white text-lg">{truncatedTitle}</h3>
     </Link>
-  );
+  )
 }
