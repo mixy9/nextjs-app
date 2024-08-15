@@ -1,16 +1,12 @@
-import { Movie } from '../../app/types/Movie'
+import { Movie } from '../../types/Movie'
 import api from './api'
+import { MoviesListResponse } from '../../types/Response'
 
-type SearchMovies = {
-  page: number
-  results: Movie[]
-  total_pages: number
-  total_results: number
-}
-
-export const searchMovies = async (searchQuery: string): Promise<Movie[]> => {
+export const searchMovies = async (
+  searchQuery: string
+): Promise<Movie[] | undefined> => {
   try {
-    const response = await api.get<SearchMovies>('/search/movie', {
+    const response = await api.get<MoviesListResponse>('/search/movie', {
       params: {
         query: searchQuery,
       },
