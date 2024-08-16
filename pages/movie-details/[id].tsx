@@ -48,7 +48,7 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
         <div className="absolute bottom-0 left-0 p-8 w-full">
           <p className="text-lg my-4 opacity-75">
-            {movie.genres.map((genre: Genre) => genre.name).join(', ')}
+            {movie.genre_ids.map((genre: Genre) => genre.name).join(', ')}
           </p>
           <h1 className="text-5xl font-bold">{movie.title}</h1>
           <div className="flex justify-between items-center">
