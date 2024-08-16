@@ -11,7 +11,6 @@ import {
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { searchMoviesApi } from '../../api/searchMoviesApi'
-import UiButton from '../ui/UiButton'
 import { Movie } from '../../types/movie'
 import { useDebounce } from '../../useDebounce'
 import ClickAwayListener from 'react-click-away-listener'
@@ -113,7 +112,7 @@ const MoviesSearchBar: FC = () => {
         <input
           type="search"
           id="default-search"
-          className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
+          className="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
             focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
             dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Die Hard"
@@ -122,12 +121,6 @@ const MoviesSearchBar: FC = () => {
           onKeyDown={handleKeyDown}
           required
         />
-
-        <div className="absolute end-2.5 bottom-2.5">
-          <UiButton type="submit" size="sm">
-            Search
-          </UiButton>
-        </div>
       </div>
 
       {debouncedQuery && isOpen && movies.length > 0 && (

@@ -58,7 +58,6 @@ export async function getServerSideProps({
       },
       cast,
     },
-    revalidate: 60,
   }
 }
 

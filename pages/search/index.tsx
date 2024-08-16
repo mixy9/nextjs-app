@@ -35,13 +35,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       movies: movies || [],
       query: query || null,
     },
-    revalidate: 60,
   }
 }
 
 const SearchDetails = ({ movies, query }: SearchDetailsProps) => {
   return (
-    <div>
+    <div className="flex flex-col py-2 mt-20 w-full h-full">
       <h1 className="text-4xl font-bold max-w-[55%] lg:text-5xl mb-8">
         Search Results for {query || 'your search'}
       </h1>
