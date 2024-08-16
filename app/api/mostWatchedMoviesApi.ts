@@ -1,6 +1,5 @@
 import api from './api'
-import { Movie } from '../../types/Movie'
-import { MoviesListResponse } from '../../types/Response'
+import { MoviesList } from '../types/movie'
 
 type Filters = {
   releaseYear?: number
@@ -13,16 +12,16 @@ export type MostWatchedMoviesParams = {
   page?: number
 }
 
-export const mostWatchedMoviesFilter = async ({
+export const getMostWatchedMovies = async ({
   filters,
   page = 1,
-}: MostWatchedMoviesParams): Promise<MoviesListResponse | unknown> => {
+}: MostWatchedMoviesParams): Promise<MoviesList | unknown> => {
   try {
-    const response = await api.get<MoviesListResponse>('/discover/movie', {
+    const response = await api.get<MoviesList>('/discover/movie', {
       params: {
         sort_by: 'popularity.asc',
         page,
-        primary_release_year: filters.releaseYear,
+        release_year: filters.releaseYear,
         'vote_average.gte': filters.rating,
         'vote_average.lte': filters.rating,
         with_genres: filters.genres,

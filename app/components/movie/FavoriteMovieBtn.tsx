@@ -1,14 +1,14 @@
 'use client'
 
 import { FC, useCallback, useEffect, useState } from 'react'
-import { FavoriteMovie, Movie } from '../../types/Movie'
+import { FavoriteMovie, Movie } from '../../types/movie'
 
 type UiHeartIconProps = {
   movie: Movie
   size: number
 }
 
-const UiHeartIcon: FC<UiHeartIconProps> = ({
+const FavoriteMovieBtn: FC<UiHeartIconProps> = ({
   movie,
   size,
 }: UiHeartIconProps) => {
@@ -66,8 +66,8 @@ const UiHeartIcon: FC<UiHeartIconProps> = ({
         viewBox="0 0 24 24"
         fill="currentColor"
         className={`${
-          isActive ? 'fill-cyan-500' : 'opacity-25'
-        } hover:fill-cyan-500 hover:opacity-100`}
+          isActive ? 'fill-red-500' : 'opacity-25'
+        } hover:fill-red-500 hover:opacity-100`}
         height={size}
         width={size}
       >
@@ -82,4 +82,4 @@ const UiHeartIcon: FC<UiHeartIconProps> = ({
   )
 }
 
-export default UiHeartIcon
+export default FavoriteMovieBtn

@@ -1,20 +1,20 @@
 'use client'
 
-type UiButton = {
-  name: string
-  icon?: JSX.Element
+import { FC, ReactNode } from 'react'
+
+type UiButtonProps = {
+  children: ReactNode
   size?: 'sm' | 'md' | 'lg'
   type?: HTMLButtonElement['type']
   clickEvent?: () => void
 }
 
-const UiButton = ({
-  name,
-  icon,
+const UiButton: FC<UiButtonProps> = ({
+  children,
   size = 'md',
   type = 'button',
   clickEvent,
-}: UiButton) => (
+}: UiButtonProps) => (
   <button
     onClick={clickEvent}
     type={type}
@@ -22,7 +22,7 @@ const UiButton = ({
           focus:outline-none focus:ring-cyan-300 font-medium rounded-md text-${size} px-4 py-2 dark:bg-cyan-600 dark:hover:bg-cyan-700 
           dark:focus:ring-cyan-800`}
   >
-    {name} {icon}
+    {children}
   </button>
 )
 

@@ -1,14 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import UiHeartIcon from './ui/UiHeartIcon'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { Movie } from '../types/Movie'
+import FavoriteMovieBtn from './FavoriteMovieBtn'
+import { Movie } from '../../types/movie'
+import { FC, memo } from 'react'
 
-type MovieCard = {
+type MovieCardProps = {
   movie: Movie
 }
 
-export default function MovieItem({ movie }: MovieCard) {
+const MovieCard: FC<MovieCardProps> = memo(({ movie }: MovieCardProps) => {
   const fallbackImageUrl = '/logo.png'
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -39,9 +39,10 @@ export default function MovieItem({ movie }: MovieCard) {
           width={226}
           height={354}
           objectFit="cover"
+          loading="lazy"
         />
         <div className="absolute m-2 top-0 right-0">
-          <UiHeartIcon movie={movie} size={25} />
+          <FavoriteMovieBtn movie={movie} size={25} />
         </div>
         {!movie.poster_path && (
           <h3 className="text-white text-lg absolute bottom-2 left-3">
@@ -51,4 +52,8 @@ export default function MovieItem({ movie }: MovieCard) {
       </div>
     </Link>
   )
-}
+})
+
+MovieCard.displayName = 'MovieCard'
+
+export default MovieCard

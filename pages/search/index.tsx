@@ -1,7 +1,7 @@
-import { searchMovies } from '../../app/components/api/search'
-import { Movie } from '../../app/types/Movie'
-import MovieList from '../../app/components/MovieList'
+import { searchMoviesApi } from '../../app/api/searchMoviesApi'
+import { Movie } from '../../app/types/movie'
 import { GetServerSidePropsContext } from 'next'
+import MovieCard from '../../app/components/movie/MovieCard'
 
 type SearchDetailsProps = {
   movies: Movie[]
@@ -23,7 +23,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   let movies: Movie[] | undefined = []
   try {
-    movies = await searchMovies(query as string)
+    movies = await searchMoviesApi(query as string)
     // Log the result for debugging
     console.log('Movies returned from API:', movies)
   } catch (error) {
@@ -43,7 +43,11 @@ export default function SearchDetails({ movies, query }: SearchDetailsProps) {
     <div>
       <h1>Search Results for {query || 'your search'}</h1>
       {movies.length > 0 ? (
-        <MovieList movies={movies} />
+        <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+        </div>
       ) : (
         <div>No results found</div>
       )}

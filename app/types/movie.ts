@@ -6,7 +6,7 @@ export type Movie = {
   overview: string
   release_date: string
   runtime: number
-  genres: Genre[]
+  genre_ids: Genre[]
   budget: number
   revenue: number
   vote_average: number
@@ -25,3 +25,21 @@ export type Provider = {
 }
 
 export type FavoriteMovie = Pick<Movie, 'id' | 'title'>
+
+export type MoviesList = {
+  page: number
+  results: Movie[]
+  total_pages: number
+  total_results: number
+}
+
+export type ProvidersList = {
+  page: number
+  results: Provider[]
+  total_pages: number
+  total_results: number
+}
+
+export type GenresList = {
+  genres: Genre[]
+}

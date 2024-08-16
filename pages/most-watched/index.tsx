@@ -1,23 +1,19 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
-import MovieList from '../../app/components/MovieList'
+import React, { useState, useEffect, useCallback, memo } from 'react'
 import InfiniteScrollObserver from '../../app/components/InfiniteScrollObserver'
 import MovieFilters from '../../app/components/MovieFilters'
-import { Movie } from '../../app/types/Movie'
-import { useDebounce } from '../../app/helpers'
+import { Movie } from '../../app/types/movie'
+import { useDebounce } from '../../app/useDebounce'
 import {
-  mostWatchedMoviesFilter,
+  getMostWatchedMovies,
   MostWatchedMoviesParams,
-} from '../../app/components/api/mostWatchedMovies'
-import { MoviesListResponse } from '../../app/types/Response'
+} from '../../app/api/mostWatchedMoviesApi'
+import { MoviesList } from '../../app/types/movie'
+import MovieCard from '../../app/components/movie/MovieCard'
 
-type MoviesFetcherProps = {
-  initialPage?: number
-}
-
-export default function MoviesFetcher({ initialPage = 1 }: MoviesFetcherProps) {
-  const [page, setPage] = useState(initialPage)
+const MostWatched = memo(() => {
+  const [page, setPage] = useState<MoviesList['page']>(1)
   const [filters, setFilters] = useState<{
     releaseYear?: number
     rating?: number
@@ -32,14 +28,23 @@ export default function MoviesFetcher({ initialPage = 1 }: MoviesFetcherProps) {
   useEffect(() => {
     const fetchMovies = async () => {
       setLoading(true)
-      const data = (await mostWatchedMoviesFilter({
+      const data = (await getMostWatchedMovies({
         filters: debouncedFilters,
         page,
-      } as MostWatchedMoviesParams)) as MoviesListResponse
+      } as MostWatchedMoviesParams)) as MoviesList
       if (page === 1) {
-        setMovies(data.results)
+        setMovies(
+          data.results.filter(
+            (movie) => movie.release_date && movie.genre_ids.length
+          )
+        )
       } else {
-        setMovies((prevMovies) => [...prevMovies, ...data.results])
+        setMovies((prevMovies) => [
+          ...prevMovies,
+          ...data.results.filter(
+            (movie) => movie.release_date && movie.genre_ids.length
+          ),
+        ])
       }
       setTotalPages(data.total_pages)
       setLoading(false)
@@ -78,11 +83,26 @@ export default function MoviesFetcher({ initialPage = 1 }: MoviesFetcherProps) {
     <div className="flex flex-col py-2 mt-20 w-full">
       <MovieFilters onFiltersChange={handleFiltersChange} />
 
-      <MovieList movies={movies} />
+      <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
+        {movies ? (
+          movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
+        ) : (
+          <p>No movies available.</p>
+        )}
+      </div>
       {page < totalPages && (
         <InfiniteScrollObserver onIntersect={loadMoreMovies} />
       )}
+
+      {page < totalPages && (
+        <InfiniteScrollObserver onIntersect={loadMoreMovies} />
+      )}
+
       {loading && <p>Loading...</p>}
     </div>
   )
-}
+})
+
+MostWatched.displayName = 'MostWatched'
+
+export default MostWatched

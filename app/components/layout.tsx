@@ -2,10 +2,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import React, { FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 import '../styles/global.css'
-import Navbar from './Navbar'
+import Navbar from './navbar/Navbar'
 import { useRouter } from 'next/router'
 
 const siteTitle = 'BestMovies.com'
@@ -14,10 +14,9 @@ const inter = Inter({ subsets: ['latin'] })
 
 interface LayoutProps {
   children: ReactNode
-  home?: boolean
 }
 
-const Layout: FC<LayoutProps> = ({ children, home }: LayoutProps) => {
+const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
   const router = useRouter()
 
   // Check if the current path is /details

@@ -1,16 +1,17 @@
 import React from 'react'
-import MovieItem from '../app/components/MovieCard'
 import {
   discoverMoviesByGenres,
   discoverMoviesByProviders,
   getGenres,
   getProviders,
   getNewestMovies,
-} from '../app/components/api/discoverMovies'
-import MovieHorizontalList from '../app/components/MovieHorizontalList'
+} from '../app/api/discoverMoviesApi'
+import UiHorizontalList from '../app/components/ui/UiHorizontalList'
 import Link from 'next/link'
 import UiButton from '../app/components/ui/UiButton'
-import { Movie, Genre, Provider } from '../app/types/Movie'
+import { Movie, Genre, Provider } from '../app/types/movie'
+import MovieProviderTabs from '../app/components/MovieProviderTabs'
+import MovieCard from '../app/components/movie/MovieCard'
 
 type HomeProps = {
   initialNewestMovies: Movie[]
@@ -66,7 +67,7 @@ export async function getServerSideProps() {
     // Fetch movies by providers
     const moviesByProviderResults = await Promise.allSettled(
       initialProviders
-        .slice(0, 5)
+        .slice(0, 8)
         .map((provider: Provider) =>
           discoverMoviesByProviders(provider.provider_id, 1)
         )
@@ -81,12 +82,13 @@ export async function getServerSideProps() {
       }
     })
 
+    console.log(moviesByProvider)
+
     return {
-      // TODO: save max number to constants
       props: {
         initialNewestMovies: initialNewestMovies.slice(0, 13),
         initialGenres: initialGenres.slice(0, 10),
-        initialProviders: initialProviders.slice(0, 5),
+        initialProviders: initialProviders.slice(0, 8),
         moviesByGenre,
         moviesByProvider,
       },
@@ -113,7 +115,7 @@ export default function Home({
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
       <div className="h-auto flex flex-col items-center justify-center p-20 lg:p-36">
         <h1 className="text-4xl font-bold m-3 text-center lg:text-6xl">
-          The Best Site To Watch
+          Best Site To Watch
           <br />
           <span className="font-semibold text-7xl text-cyan-500 lg:text-8xl">
             Movies
@@ -123,35 +125,33 @@ export default function Home({
         <p className="p-10 lg:text-2xl">
           Your guide to streaming movies, TV series and sports
         </p>
-
-        <Link href="/most-watched">
-          <UiButton name="Most Watched Movies" size="lg" />
-        </Link>
+        <UiButton size="lg">
+          <Link href="/most-watched">Most Watched Movies</Link>
+        </UiButton>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-5">
+      <div className="mt-6 grid grid-cols-1 gap-5">
         <h2 className="text-3xl font-bold pb-3">Newest Movies</h2>
-        <MovieHorizontalList movies={initialNewestMovies} />
+        <UiHorizontalList>
+          {initialNewestMovies.map((movie) => (
+            <MovieCard movie={movie} key={movie.id} />
+          ))}
+        </UiHorizontalList>
       </div>
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-10">
-        {Object.keys(moviesByProvider).map((providerName) => (
-          <div key={providerName}>
-            <h2 className="text-3xl pb-5">{providerName} Movies</h2>
-            <div className="gap-5 flex">
-              {moviesByProvider[providerName].map((movi) => (
-                <MovieItem movie={movi} key={movi.id} />
-              ))}
-            </div>
-          </div>
-        ))}
+        <MovieProviderTabs moviesByProvider={moviesByProvider} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-1 gap-10">
+      <div className="mt-6 grid grid-cols-1 gap-10">
         {Object.keys(moviesByGenre).map((genreName) => (
           <div key={genreName}>
             <h2 className="text-3xl pb-5">{genreName} Movies</h2>
-            <MovieHorizontalList movies={moviesByGenre[genreName]} />
+            <UiHorizontalList>
+              {moviesByGenre[genreName].map((movie) => (
+                <MovieCard movie={movie} key={movie.id} />
+              ))}
+            </UiHorizontalList>
           </div>
         ))}
       </div>

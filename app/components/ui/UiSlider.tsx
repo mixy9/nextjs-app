@@ -1,15 +1,20 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, FC } from 'react'
 
-type SliderProps = {
+type UiSliderProps = {
   min: number
   max: number
   step: number
   onValueChange: (value: number) => void
 }
 
-export default function Slider({ min, max, step, onValueChange }: SliderProps) {
+const UiSlider: FC<UiSliderProps> = ({
+  min,
+  max,
+  step,
+  onValueChange,
+}: UiSliderProps) => {
   const [value, setValue] = useState<number>(max)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,3 +44,5 @@ export default function Slider({ min, max, step, onValueChange }: SliderProps) {
     </div>
   )
 }
+
+export default UiSlider

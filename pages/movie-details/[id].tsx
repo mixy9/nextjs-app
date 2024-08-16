@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import { Genre, Movie } from '../../app/types/Movie'
-import { getMovie } from '../../app/components/api/movieDetailsApi'
-import UiHeartIcon from '../../app/components/ui/UiHeartIcon'
+import { Genre, Movie } from '../../app/types/movie'
+import { getMovieDetails } from '../../app/api/movieDetailsApi'
+import FavoriteMovieBtn from '../../app/components/movie/FavoriteMovieBtn'
 
 type MovieDetailsProps = {
   movie: Movie
@@ -14,7 +14,7 @@ export async function getServerSideProps({
   params: { id: string }
 }) {
   const { id } = params
-  const movie = (await getMovie(id)) as Movie
+  const movie = (await getMovieDetails(id)) as Movie
 
   // Format the release date on the server
   const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString()
@@ -58,7 +58,7 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
 
             {/* Favorite */}
             <div className="md:ml-8 md:w-3/3">
-              <UiHeartIcon movie={movie} size={35} />
+              <FavoriteMovieBtn movie={movie} size={35} />
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
             />
           </div>
 
-          {/* Movie Details */}
+          {/* Global Details */}
           <div className="md:ml-8 md:w-2/3">
             <div className="mb-8">
               <h2 className="text-3xl font-semibold mb-4">Overview</h2>

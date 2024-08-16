@@ -6,28 +6,29 @@ import {
   FormEvent,
   ChangeEvent,
   KeyboardEvent,
+  FC,
 } from 'react'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
-import { searchMovies } from './api/search'
-import UiButton from './ui/UiButton'
-import { Movie } from '../types/Movie'
-import { useDebounce } from '../helpers'
+import { searchMoviesApi } from '../../api/searchMoviesApi'
+import UiButton from '../ui/UiButton'
+import { Movie } from '../../types/movie'
+import { useDebounce } from '../../useDebounce'
 
 const fetchMovies = async (query: string): Promise<Movie[]> => {
-  const res = await searchMovies(query)
+  const res = await searchMoviesApi(query)
   if (!res) {
     throw new Error('Failed to fetch')
   }
   return res
 }
 
-export default function MoviesSearchBar() {
+const MoviesSearchBar: FC = () => {
   const [query, setQuery] = useState<string>('')
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const router = useRouter()
 
-  const debouncedQuery = useDebounce(query, 300) // 0.3s debounce query delay
+  const debouncedQuery = useDebounce(query, 300)
 
   const sanitizedQuery: string = encodeURIComponent(
     debouncedQuery.replace(/[^a-zA-Z0-9 ]/g, '').trim()
@@ -114,7 +115,9 @@ export default function MoviesSearchBar() {
         />
 
         <div className="absolute end-2.5 bottom-2.5">
-          <UiButton type="submit" name="Search" size="sm" />
+          <UiButton type="submit" size="sm">
+            Search
+          </UiButton>
         </div>
       </div>
 
@@ -142,3 +145,5 @@ export default function MoviesSearchBar() {
     </form>
   )
 }
+
+export default MoviesSearchBar

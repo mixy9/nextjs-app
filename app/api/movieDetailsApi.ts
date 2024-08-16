@@ -1,7 +1,9 @@
-import { Movie } from '../../types/Movie'
+import { Movie } from '../types/movie'
 import api from './api'
 
-export const getMovie = async (movieId: string): Promise<Movie | unknown> => {
+export const getMovieDetails = async (
+  movieId: string
+): Promise<Movie | unknown> => {
   try {
     const response = await api.get<Movie>(`/movie/${movieId}`, {})
 
