@@ -42,7 +42,7 @@ const MovieCard: FC<MovieCardProps> = memo(({ movie }: MovieCardProps) => {
           loading="lazy"
         />
         <div className="absolute m-2 top-0 right-0">
-          <FavoriteMovieBtn movie={movie} size={25} />
+          <FavoriteMovieBtn movie={movie} size={35} />
         </div>
         {!movie.poster_path && (
           <h3 className="text-white text-lg absolute bottom-2 left-3">

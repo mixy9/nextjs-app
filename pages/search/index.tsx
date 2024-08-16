@@ -24,7 +24,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let movies: Movie[] | undefined = []
   try {
     movies = await searchMoviesApi(query as string)
-    // Log the result for debugging
     console.log('Movies returned from API:', movies)
   } catch (error) {
     console.error('Failed to fetch movies:', error)
@@ -38,7 +37,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default function SearchDetails({ movies, query }: SearchDetailsProps) {
+const SearchDetails = ({ movies, query }: SearchDetailsProps) => {
   return (
     <div>
       <h1>Search Results for {query || 'your search'}</h1>
@@ -54,3 +53,5 @@ export default function SearchDetails({ movies, query }: SearchDetailsProps) {
     </div>
   )
 }
+
+export default SearchDetails

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import {
   discoverMoviesByGenres,
   discoverMoviesByProviders,
@@ -106,11 +106,11 @@ export async function getServerSideProps() {
   }
 }
 
-export default function Home({
+const Home: FC<HomeProps> = ({
   initialNewestMovies,
   moviesByGenre,
   moviesByProvider,
-}: HomeProps) {
+}: HomeProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full">
       <div className="h-auto flex flex-col items-center justify-center p-20 lg:p-36">
@@ -125,7 +125,7 @@ export default function Home({
         <p className="p-10 lg:text-2xl">
           Your guide to streaming movies, TV series and sports
         </p>
-        <UiButton size="lg">
+        <UiButton size="2xl">
           <Link href="/most-watched">Most Watched Movies</Link>
         </UiButton>
       </div>
@@ -158,3 +158,5 @@ export default function Home({
     </div>
   )
 }
+
+export default Home

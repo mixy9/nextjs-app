@@ -21,7 +21,7 @@ export const getMostWatchedMovies = async ({
       params: {
         sort_by: 'popularity.asc',
         page,
-        release_year: filters.releaseYear,
+        primary_release_year: filters.releaseYear,
         'vote_average.gte': filters.rating,
         'vote_average.lte': filters.rating,
         with_genres: filters.genres,

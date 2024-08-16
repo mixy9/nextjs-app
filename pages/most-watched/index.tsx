@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, memo } from 'react'
+import React, { useState, useEffect, useCallback, memo, FC } from 'react'
 import InfiniteScrollObserver from '../../app/components/InfiniteScrollObserver'
 import MovieFilters from '../../app/components/MovieFilters'
 import { Movie } from '../../app/types/movie'
@@ -12,7 +12,7 @@ import {
 import { MoviesList } from '../../app/types/movie'
 import MovieCard from '../../app/components/movie/MovieCard'
 
-const MostWatched = memo(() => {
+const MostWatched: FC = memo(() => {
   const [page, setPage] = useState<MoviesList['page']>(1)
   const [filters, setFilters] = useState<{
     releaseYear?: number
@@ -33,18 +33,9 @@ const MostWatched = memo(() => {
         page,
       } as MostWatchedMoviesParams)) as MoviesList
       if (page === 1) {
-        setMovies(
-          data.results.filter(
-            (movie) => movie.release_date && movie.genre_ids.length
-          )
-        )
+        setMovies(data.results)
       } else {
-        setMovies((prevMovies) => [
-          ...prevMovies,
-          ...data.results.filter(
-            (movie) => movie.release_date && movie.genre_ids.length
-          ),
-        ])
+        setMovies((prevMovies) => [...prevMovies, ...data.results])
       }
       setTotalPages(data.total_pages)
       setLoading(false)
@@ -59,20 +50,16 @@ const MostWatched = memo(() => {
       rating?: number
       genres?: string
     }) => {
-      setFilters((prevFilters) => {
-        if (
-          prevFilters.releaseYear !== newFilters.releaseYear ||
-          prevFilters.rating !== newFilters.rating ||
-          prevFilters.genres !== newFilters.genres
-        ) {
-          setPage(1)
-          return newFilters
-        }
-        return prevFilters
-      })
+      setFilters(newFilters)
+      setPage(1) // Reset page to 1 when filters change
     },
     []
   )
+
+  useEffect(() => {
+    // Fetch movies when filters change and page is reset
+    setPage(1) // Reset page to 1 when filters change
+  }, [debouncedFilters])
 
   const loadMoreMovies = () => {
     if (loading || page >= totalPages) return
@@ -84,15 +71,12 @@ const MostWatched = memo(() => {
       <MovieFilters onFiltersChange={handleFiltersChange} />
 
       <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
-        {movies ? (
+        {movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (
           <p>No movies available.</p>
         )}
       </div>
-      {page < totalPages && (
-        <InfiniteScrollObserver onIntersect={loadMoreMovies} />
-      )}
 
       {page < totalPages && (
         <InfiniteScrollObserver onIntersect={loadMoreMovies} />

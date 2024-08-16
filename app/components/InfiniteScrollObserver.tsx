@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 
 const BOTTOM_FETCH_OFFSET_PERCENTAGE = 0.4 // 40%
 
-interface InfiniteScrollObserverProps {
+type InfiniteScrollObserverProps = {
   onIntersect: () => void
 }
 
-export default function InfiniteScrollObserver({
+const InfiniteScrollObserver: FC<InfiniteScrollObserverProps> = ({
   onIntersect,
-}: InfiniteScrollObserverProps) {
+}: InfiniteScrollObserverProps) => {
   const observerRef = useRef<IntersectionObserver | null>(null)
   const observerElementRef = useRef<HTMLDivElement | null>(null)
 
@@ -43,3 +43,5 @@ export default function InfiniteScrollObserver({
     <div ref={observerElementRef} className="infinite-scroll-observer"></div>
   )
 }
+
+export default InfiniteScrollObserver

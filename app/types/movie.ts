@@ -18,6 +18,24 @@ export type Genre = {
   name: string
 }
 
+export type Cast = {
+  name: string
+  cast_id: number
+  character: string
+}
+
+export type Crew = {
+  name: string
+  credit_id: number
+  department: string
+}
+
+export type Credits = {
+  id: number
+  cast: Cast[]
+  crew: Crew[]
+}
+
 export type Provider = {
   logo_path: string
   provider_name: string

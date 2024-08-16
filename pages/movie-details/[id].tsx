@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import { Genre, Movie } from '../../app/types/movie'
-import { getMovieDetails } from '../../app/api/movieDetailsApi'
+import { Cast, Genre, Movie } from '../../app/types/movie'
+import { getCast, getMovieDetails } from '../../app/api/movieDetailsApi'
 import FavoriteMovieBtn from '../../app/components/movie/FavoriteMovieBtn'
+import { FC } from 'react'
 
 type MovieDetailsProps = {
   movie: Movie
+  cast: Cast[]
 }
 
 export async function getServerSideProps({
@@ -14,10 +16,38 @@ export async function getServerSideProps({
   params: { id: string }
 }) {
   const { id } = params
-  const movie = (await getMovieDetails(id)) as Movie
 
-  // Format the release date on the server
-  const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString()
+  const [movieResult, creditsResult] = await Promise.allSettled([
+    getMovieDetails(id),
+    getCast(id),
+  ])
+
+  let movie = null
+  let cast = [] as Cast[]
+
+  if (movieResult.status === 'fulfilled') {
+    movie = movieResult.value as Movie
+  }
+
+  if (creditsResult.status === 'fulfilled') {
+    cast = (creditsResult.value || []) as Cast[]
+  }
+
+  if (!movie) {
+    return {
+      notFound: true,
+    }
+  }
+
+  // Format the release date
+  const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString(
+    'en-GB',
+    {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }
+  )
 
   return {
     props: {
@@ -25,11 +55,15 @@ export async function getServerSideProps({
         ...movie,
         formattedReleaseDate,
       },
+      cast,
     },
   }
 }
 
-export default function MovieDetails({ movie }: MovieDetailsProps) {
+const MovieDetails: FC<MovieDetailsProps> = ({
+  movie,
+  cast,
+}: MovieDetailsProps) => {
   const router = useRouter()
 
   if (router.isFallback) {
@@ -48,9 +82,13 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
         <div className="absolute bottom-0 left-0 p-8 w-full">
           <p className="text-lg my-4 opacity-75">
-            {movie.genre_ids.map((genre: Genre) => genre.name).join(', ')}
+            {movie.genre_ids?.map((genre: Genre) => genre.name).join(', ')}
           </p>
-          <h1 className="text-5xl font-bold">{movie.title}</h1>
+          <div className="flex gap-3">
+            <h1 className="text-4xl font-bold max-w-[55%] lg:text-5xl">
+              {movie.title}
+            </h1>
+          </div>
           <div className="flex justify-between items-center">
             <p className="text-lg mt-4">
               {new Date(movie.release_date).getFullYear()} | {movie.runtime} min
@@ -73,7 +111,7 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
               src={
                 movie.poster_path
                   ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                  : '/logo.png'
+                  : '/images/logo.png'
               }
               alt={movie.title}
               width={500}
@@ -91,12 +129,36 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
 
             <div>
               <h2 className="text-3xl font-semibold mb-4">More Information</h2>
-              <ul className="text-lg text-gray-400">
-                <li>Budget: ${movie.budget.toLocaleString()}</li>
-                <li>Revenue: ${movie.revenue.toLocaleString()}</li>
-                <li>Release Date: {movie.formattedReleaseDate}</li>
-                <li>Rating: {movie.vote_average} / 10</li>
+              <ul className="text-lg text-gray-300">
+                <li>
+                  <strong>Budget:</strong> ${movie.budget.toLocaleString()}
+                </li>
+                <li>
+                  <strong>Revenue:</strong> ${movie.revenue.toLocaleString()}
+                </li>
+                <li>
+                  <strong>Release Date:</strong> {movie.formattedReleaseDate}
+                </li>
+                <li>
+                  <strong>Rating:</strong> {movie.vote_average} / 10
+                </li>
               </ul>
+            </div>
+
+            <div className="mt-8">
+              <h2 className="text-3xl font-semibold mb-4">Cast</h2>
+              <div className="flex flex-wrap">
+                {cast?.map((actor) => (
+                  <div key={actor.cast_id} className="w-1/4">
+                    <div className="flex flex-col items-start">
+                      <p className="mt-2 text-left">{actor.name}</p>
+                      <p className="text-center text-sm text-gray-500">
+                        {actor.character}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -104,3 +166,5 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
     </div>
   )
 }
+
+export default MovieDetails

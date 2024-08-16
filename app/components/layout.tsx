@@ -8,7 +8,7 @@ import '../styles/global.css'
 import Navbar from './navbar/Navbar'
 import { useRouter } from 'next/router'
 
-const siteTitle = 'BestMovies.com'
+const siteTitle = 'BestMovies'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -19,7 +19,6 @@ interface LayoutProps {
 const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
   const router = useRouter()
 
-  // Check if the current path is /details
   const isDetailsPage = router.pathname.includes('/movie-details')
 
   return (

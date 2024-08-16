@@ -2,7 +2,7 @@ import { useState, useEffect, FC } from 'react'
 import { FavoriteMovie, Movie } from '../../types/movie'
 import Link from 'next/link'
 
-const FavoritesDropdown: FC = () => {
+const FavoritesList: FC = () => {
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([])
 
   useEffect(() => {
@@ -42,4 +42,4 @@ const FavoritesDropdown: FC = () => {
   )
 }
 
-export default FavoritesDropdown
+export default FavoritesList

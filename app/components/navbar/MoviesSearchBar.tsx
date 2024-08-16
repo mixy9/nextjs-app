@@ -14,6 +14,7 @@ import { searchMoviesApi } from '../../api/searchMoviesApi'
 import UiButton from '../ui/UiButton'
 import { Movie } from '../../types/movie'
 import { useDebounce } from '../../useDebounce'
+import ClickAwayListener from 'react-click-away-listener'
 
 const fetchMovies = async (query: string): Promise<Movie[]> => {
   const res = await searchMoviesApi(query)
@@ -27,6 +28,7 @@ const MoviesSearchBar: FC = () => {
   const [query, setQuery] = useState<string>('')
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
   const router = useRouter()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const debouncedQuery = useDebounce(query, 300)
 
@@ -48,6 +50,7 @@ const MoviesSearchBar: FC = () => {
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
+    setIsOpen(true)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -68,8 +71,14 @@ const MoviesSearchBar: FC = () => {
     }
   }
 
+  const handleClickAway = () => {
+    setIsOpen(false)
+  }
+
   const handleMovieClick = (id: number) => {
     router.push(`/movie-details/${id}`)
+
+    setIsOpen(false)
   }
 
   return (
@@ -105,8 +114,8 @@ const MoviesSearchBar: FC = () => {
           type="search"
           id="default-search"
           className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50
-          focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-          dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Die Hard"
           value={query}
           onChange={handleSearch}
@@ -121,24 +130,28 @@ const MoviesSearchBar: FC = () => {
         </div>
       </div>
 
-      {debouncedQuery && movies.length > 0 && (
-        <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg z-50">
-          <ul className="py-1" role="listbox">
-            {movies.map((movie, index) => (
-              <li
-                key={movie.id}
-                onClick={() => handleMovieClick(movie.id)}
-                className={`text-gray-700 block px-4 py-2 text-sm cursor-pointer ${
-                  index === selectedIndex ? 'bg-gray-200' : 'hover:bg-gray-100'
-                }`}
-                role="option"
-                aria-selected={index === selectedIndex}
-              >
-                {movie.title}
-              </li>
-            ))}
-          </ul>
-        </div>
+      {debouncedQuery && isOpen && movies.length > 0 && (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div className="absolute w-full mt-2 bg-white rounded-md shadow-lg z-50">
+            <ul className="py-1" role="listbox">
+              {movies.map((movie, index) => (
+                <li
+                  key={movie.id}
+                  onClick={() => handleMovieClick(movie.id)}
+                  className={`text-gray-700 block px-4 py-2 text-sm cursor-pointer ${
+                    index === selectedIndex
+                      ? 'bg-gray-200'
+                      : 'hover:bg-gray-100'
+                  }`}
+                  role="option"
+                  aria-selected={index === selectedIndex}
+                >
+                  {movie.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </ClickAwayListener>
       )}
 
       {error && <p className="text-red-500 mt-2">Failed to load movies</p>}
