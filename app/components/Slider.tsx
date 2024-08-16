@@ -10,7 +10,7 @@ type SliderProps = {
 }
 
 export default function Slider({ min, max, step, onValueChange }: SliderProps) {
-  const [value, setValue] = useState<number>(min)
+  const [value, setValue] = useState<number>(max)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value)

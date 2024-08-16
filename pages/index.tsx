@@ -1,5 +1,5 @@
 import React from 'react'
-import MovieItem from '../app/components/MovieItem'
+import MovieItem from '../app/components/MovieCard'
 import {
   discoverMoviesByGenres,
   discoverMoviesByProviders,
@@ -110,15 +110,17 @@ export default function Home({
   moviesByProvider,
 }: HomeProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2 px-8">
-      <div className="h-auto flex flex-col items-center justify-center p-36">
-        <h1 className="text-6xl font-bold m-3 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full">
+      <div className="h-auto flex flex-col items-center justify-center p-20 lg:p-36">
+        <h1 className="text-4xl font-bold m-3 text-center lg:text-6xl">
           The Best Site To Watch
           <br />
-          <span className="font-semibold text-8xl text-cyan-500">Movies</span>
+          <span className="font-semibold text-7xl text-cyan-500 lg:text-8xl">
+            Movies
+          </span>
         </h1>
 
-        <p className="p-10 text-2xl">
+        <p className="p-10 lg:text-2xl">
           Your guide to streaming movies, TV series and sports
         </p>
 

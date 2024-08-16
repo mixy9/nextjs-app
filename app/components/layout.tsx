@@ -2,11 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from 'next/font/google'
-import { FC, ReactNode } from 'react'
-import FavoritesDropdown from './FavoritesDropdown'
-import MoviesSearchBar from './MoviesSearchBar'
+import React, { FC, ReactNode } from 'react'
 
 import '../styles/global.css'
+import Navbar from './Navbar'
+import { useRouter } from 'next/router'
 
 const siteTitle = 'BestMovies.com'
 
@@ -18,6 +18,11 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children, home }: LayoutProps) => {
+  const router = useRouter()
+
+  // Check if the current path is /details
+  const isDetailsPage = router.pathname.includes('/movie-details')
+
   return (
     <div
       className={`bg-gray-900 min-h-screen ${inter.className} text-white grid grid-cols-1`}
@@ -39,44 +44,32 @@ const Layout: FC<LayoutProps> = ({ children, home }: LayoutProps) => {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-      <header className="flex justify-between items-center h-24 py-3 gap-8 px-8 bg-cyan-950 top-0 sticky z-10">
+      <header className="flex flex-wrap justify-between items-center h-24 py-3 gap-8 bg-cyan-950 top-0 sticky z-10 px-3 md:px-7 lg:px-8">
         <div className="flex items-center gap-3">
-          {home ? (
-            <>
-              <Image
-                priority
-                src="/logo.png"
-                height={60}
-                width={60}
-                alt={`${siteTitle} logo`}
-              />
-              <h1 className="text-2xl font-bold">{siteTitle}</h1>
-            </>
-          ) : (
-            <Link
-              className="flex gap-3 items-center"
-              href="/"
-              aria-label="Go to home page"
-            >
-              <Image
-                priority
-                src="/logo.png"
-                height={45}
-                width={45}
-                alt={`${siteTitle} logo`}
-              />
-              <h2 className="text-2xl font-medium">{siteTitle}</h2>
-            </Link>
-          )}
+          <Link
+            className="flex gap-3 items-center"
+            href="/"
+            aria-label="Go to home page"
+          >
+            <Image
+              priority
+              src="/images/logo.png"
+              height={45}
+              width={45}
+              alt={`${siteTitle} logo`}
+            />
+            <h2 className="text-2xl font-medium">{siteTitle}</h2>
+          </Link>
         </div>
 
-        <nav className="flex items-center justify-between gap-4">
-          <MoviesSearchBar />
-          <FavoritesDropdown />
-        </nav>
+        <Navbar />
       </header>
 
-      <main className="flex flex-col justify-center items-center overflow-hidden w-full h-full">
+      <main
+        className={`flex flex-col justify-center items-center overflow-hidden w-full h-full ${
+          !isDetailsPage ? 'px-4 lg:px-8' : ''
+        }`}
+      >
         {children}
       </main>
     </div>

@@ -16,7 +16,7 @@ export async function getServerSideProps({
   const { id } = params
   const movie = (await getMovie(id)) as Movie
 
-  // Format the release date on the server side
+  // Format the release date on the server
   const formattedReleaseDate = new Date(movie.release_date).toLocaleDateString()
 
   return {
@@ -38,7 +38,7 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
 
   return (
     <div className="min-h-screen w-full">
-      {/* Banner Image with Gradient */}
+      {/* Banner Image */}
       <div
         className="relative h-96 bg-cover bg-center"
         style={{
@@ -47,19 +47,23 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-90"></div>
         <div className="absolute bottom-0 left-0 p-8 w-full">
+          <p className="text-lg my-4 opacity-75">
+            {movie.genres.map((genre: Genre) => genre.name).join(', ')}
+          </p>
           <h1 className="text-5xl font-bold">{movie.title}</h1>
           <div className="flex justify-between items-center">
             <p className="text-lg mt-4">
               {new Date(movie.release_date).getFullYear()} | {movie.runtime} min
             </p>
-            <p className="text-lg mt-4 opacity-75">
-              {movie.genres.map((genre: Genre) => genre.name).join(', ')}
-            </p>
+
+            {/* Favorite */}
+            <div className="md:ml-8 md:w-3/3">
+              <UiHeartIcon movie={movie} size={35} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
           {/* Poster Image */}
@@ -94,11 +98,6 @@ export default function MovieDetails({ movie }: MovieDetailsProps) {
                 <li>Rating: {movie.vote_average} / 10</li>
               </ul>
             </div>
-          </div>
-
-          {/* Favorite */}
-          <div className="md:ml-8 md:w-3/3">
-            <UiHeartIcon movie={movie} size={35} />
           </div>
         </div>
       </div>

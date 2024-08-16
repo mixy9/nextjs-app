@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
-import MovieItem from './MovieItem'
+import MovieItem from './MovieCard'
 import styles from '../styles/scroller.module.css'
 import { Movie } from '../types/Movie'
 
@@ -35,7 +35,7 @@ export default function MovieHorizontalList({ movies }: MovieHorizontalList) {
 
   return (
     <div
-      className="flex relative justify-center"
+      className={`flex relative justify-center lg:${styles.horizontalScroll}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

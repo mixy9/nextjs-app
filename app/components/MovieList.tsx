@@ -1,4 +1,4 @@
-import MovieItem from './MovieItem'
+import MovieItem from './MovieCard'
 import { Movie } from '../types/Movie'
 
 type MoviesList = {
@@ -8,7 +8,7 @@ type MoviesList = {
 export default function MovieList({ movies }: MoviesList) {
   if (!movies.length) return null
   return (
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-5 gap-10">
+    <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
       {movies.map((movie) => (
         <MovieItem key={movie.id} movie={movie} />
       ))}

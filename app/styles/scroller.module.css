@@ -1,6 +1,12 @@
+.horizontalScroll {
+  margin-left: -26px;
+  margin-right: -26px;
+}
+
 .actionButton {
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-60%);
+  margin: 0 1rem;
 }
 
 .chevronCircle {
@@ -36,4 +42,10 @@
   top: 39%;
   right: 40%;
   transform: rotate(45deg);
+}
+
+@media screen and (max-width: 640px) {
+  .actionButton {
+    display: none;
+  }
 }

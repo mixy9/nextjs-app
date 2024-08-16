@@ -75,7 +75,7 @@ export default function MoviesFetcher({ initialPage = 1 }: MoviesFetcherProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center self-start py-2 mt-20">
+    <div className="flex flex-col py-2 mt-20 w-full">
       <MovieFilters onFiltersChange={handleFiltersChange} />
 
       <MovieList movies={movies} />

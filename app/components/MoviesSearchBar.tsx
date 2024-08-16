@@ -74,7 +74,7 @@ export default function MoviesSearchBar() {
   return (
     <form
       onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
-      className="relative"
+      className="relative w-full md:w-80"
     >
       <label
         htmlFor="default-search"

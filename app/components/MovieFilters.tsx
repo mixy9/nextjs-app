@@ -34,7 +34,7 @@ const MovieFilters: FC<MovieFiltersProps> = ({ onFiltersChange }) => {
   }
 
   return (
-    <div className="flex gap-10 items-center justify-center self-start py-2 mt-2">
+    <div className="flex gap-10 flex-wrap items-center justify-center lg:self-start py-2 mt-2">
       <div className="flex gap-3">
         Release year:
         <Slider

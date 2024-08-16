@@ -57,7 +57,7 @@ export default function GenresFilterDropdown({
         name="Genres"
         icon={
           <Image
-            src="images/chevron_down.svg"
+            src="images/chevron-down.svg"
             alt="ChevronDown"
             width={12}
             height={12}

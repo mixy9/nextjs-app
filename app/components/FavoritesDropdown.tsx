@@ -45,7 +45,7 @@ export default function Dropdown() {
         name="Favorites"
         icon={
           <Image
-            src="images/chevron_down.svg"
+            src="images/chevron-down.svg"
             alt="ChevronDown"
             width={20}
             height={20}
