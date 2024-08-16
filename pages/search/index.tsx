@@ -2,6 +2,7 @@ import { searchMoviesApi } from '../../app/api/searchMoviesApi'
 import { Movie } from '../../app/types/movie'
 import { GetServerSidePropsContext } from 'next'
 import MovieCard from '../../app/components/movie/MovieCard'
+import React from 'react'
 
 type SearchDetailsProps = {
   movies: Movie[]
@@ -34,15 +35,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       movies: movies || [],
       query: query || null,
     },
+    revalidate: 60,
   }
 }
 
 const SearchDetails = ({ movies, query }: SearchDetailsProps) => {
   return (
     <div>
-      <h1>Search Results for {query || 'your search'}</h1>
+      <h1 className="text-4xl font-bold max-w-[55%] lg:text-5xl mb-8">
+        Search Results for {query || 'your search'}
+      </h1>
       {movies.length > 0 ? (
-        <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
+        <div className="mt-6 flex flex-wrap w-full justify-center md:justify-around gap-8">
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}

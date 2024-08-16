@@ -5,13 +5,10 @@ import UiSlider from './ui/UiSlider'
 import { Genre } from '../types/movie'
 import UiDropdown from './ui/UiDropdown'
 import { getGenres } from '../api/discoverMoviesApi'
+import { Filters } from '../api/mostWatchedMoviesApi'
 
 type MovieFiltersProps = {
-  onFiltersChange: (filters: {
-    releaseYear?: number
-    rating?: number
-    genres?: string
-  }) => void
+  onFiltersChange: (filters: Filters) => void
 }
 
 const releaseYears = {
@@ -25,9 +22,10 @@ const ratings = {
 } as const
 
 const MovieFilters: FC<MovieFiltersProps> = ({ onFiltersChange }) => {
-  const [releaseYear, setReleaseYear] = useState<number>(releaseYears.max)
-  const [rating, setRating] = useState<number>(ratings.max)
-  const [genres, setGenres] = useState<string | undefined>(undefined)
+  const [releaseYear, setReleaseYear] =
+    useState<Filters['releaseYear']>(undefined)
+  const [rating, setRating] = useState<Filters['rating']>(undefined)
+  const [genres, setGenres] = useState<Filters['genres']>(undefined)
 
   const [initGenres, setInitGenres] = useState<Genre[]>([])
 
@@ -59,7 +57,6 @@ const MovieFilters: FC<MovieFiltersProps> = ({ onFiltersChange }) => {
   const handleGenresChange = (e: ChangeEvent<HTMLInputElement>) => {
     const genreId = Number(e.target.value)
 
-    // Handle the case where genres is undefined
     let updatedGenres = genres ? genres.split(',').filter(Boolean) : []
 
     if (e.target.checked) {

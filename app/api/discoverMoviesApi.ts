@@ -43,7 +43,7 @@ export const discoverMoviesByGenres = async (
   try {
     const response = await api.get<MoviesList>('/discover/movie', {
       params: {
-        sort_by: 'release_date.asc&popularity.asc',
+        sort_by: 'popularity.asc',
         with_genres: genreId,
         page,
       },
@@ -61,7 +61,7 @@ export const discoverMoviesByProviders = async (
   try {
     const response = await api.get<MoviesList>('/discover/movie', {
       params: {
-        sort_by: 'release_date.asc&popularity.asc',
+        sort_by: 'popularity.asc',
         with_watch_providers: providerId,
         page,
       },

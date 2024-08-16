@@ -64,7 +64,7 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
       </header>
 
       <main
-        className={`flex flex-col justify-center items-center overflow-hidden w-full h-full ${
+        className={`flex flex-col justify-center items-center overflow-hidden min-h-screen w-full h-full ${
           !isDetailsPage ? 'px-4 lg:px-8' : ''
         }`}
       >

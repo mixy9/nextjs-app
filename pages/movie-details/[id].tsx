@@ -4,6 +4,7 @@ import { Cast, Genre, Movie } from '../../app/types/movie'
 import { getCast, getMovieDetails } from '../../app/api/movieDetailsApi'
 import FavoriteMovieBtn from '../../app/components/movie/FavoriteMovieBtn'
 import { FC } from 'react'
+import Head from 'next/head'
 
 type MovieDetailsProps = {
   movie: Movie
@@ -57,6 +58,7 @@ export async function getServerSideProps({
       },
       cast,
     },
+    revalidate: 60,
   }
 }
 
@@ -72,6 +74,16 @@ const MovieDetails: FC<MovieDetailsProps> = ({
 
   return (
     <div className="min-h-screen w-full">
+      <Head>
+        <title>{movie.title}</title>
+        <meta property="og:title" content={movie.title} />
+        <meta property="og:description" content={movie.overview} />
+        <meta
+          property="og:image"
+          content={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        />
+      </Head>
+
       {/* Banner Image */}
       <div
         className="relative h-96 bg-cover bg-center"

@@ -6,6 +6,7 @@ import MovieFilters from '../../app/components/MovieFilters'
 import { Movie } from '../../app/types/movie'
 import { useDebounce } from '../../app/useDebounce'
 import {
+  Filters,
   getMostWatchedMovies,
   MostWatchedMoviesParams,
 } from '../../app/api/mostWatchedMoviesApi'
@@ -14,11 +15,7 @@ import MovieCard from '../../app/components/movie/MovieCard'
 
 const MostWatched: FC = memo(() => {
   const [page, setPage] = useState<MoviesList['page']>(1)
-  const [filters, setFilters] = useState<{
-    releaseYear?: number
-    rating?: number
-    genres?: string
-  }>({})
+  const [filters, setFilters] = useState<Filters | {}>({})
   const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
   const [totalPages, setTotalPages] = useState<number>(0)
@@ -44,21 +41,13 @@ const MostWatched: FC = memo(() => {
     fetchMovies()
   }, [debouncedFilters, page])
 
-  const handleFiltersChange = useCallback(
-    (newFilters: {
-      releaseYear?: number
-      rating?: number
-      genres?: string
-    }) => {
-      setFilters(newFilters)
-      setPage(1) // Reset page to 1 when filters change
-    },
-    []
-  )
+  const handleFiltersChange = useCallback((newFilters: Filters) => {
+    setFilters(newFilters)
+    setPage(1)
+  }, [])
 
   useEffect(() => {
-    // Fetch movies when filters change and page is reset
-    setPage(1) // Reset page to 1 when filters change
+    setPage(1)
   }, [debouncedFilters])
 
   const loadMoreMovies = () => {
@@ -67,14 +56,17 @@ const MostWatched: FC = memo(() => {
   }
 
   return (
-    <div className="flex flex-col py-2 mt-20 w-full">
+    <div className="flex flex-col py-2 mt-20 w-full h-full">
+      <h1 className="text-4xl font-bold max-w-[55%] lg:text-5xl mb-8">
+        Most Watched Movies
+      </h1>
       <MovieFilters onFiltersChange={handleFiltersChange} />
 
-      <div className="mt-6 flex flex-wrap w-full justify-center md:justify-between gap-8">
+      <div className="mt-6 flex flex-wrap w-full h-full justify-center md:justify-around gap-8">
         {movies.length > 0 ? (
           movies.map((movie) => <MovieCard key={movie.id} movie={movie} />)
         ) : (
-          <p>No movies available.</p>
+          <p className="text-center">No movies available.</p>
         )}
       </div>
 

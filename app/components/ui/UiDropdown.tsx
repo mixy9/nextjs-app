@@ -36,10 +36,11 @@ const UiDropdown: FC<UiDropdownProps> = ({
         >
           {label}
           <Image
+            className="ml-2"
             src="/images/chevron-down.svg"
             alt="ChevronDown"
-            width={12}
-            height={12}
+            width={20}
+            height={20}
           />
         </UiButton>
 

@@ -32,17 +32,16 @@ const MovieCard: FC<MovieCardProps> = memo(({ movie }: MovieCardProps) => {
         lg:w-56 lg:h-80`}
       >
         <Image
-          className="h-full"
-          layout="responsive"
           src={imageUrl}
           alt={truncatedTitle}
           width={226}
           height={354}
+          layout="responsive"
           objectFit="cover"
           loading="lazy"
         />
         <div className="absolute m-2 top-0 right-0">
-          <FavoriteMovieBtn movie={movie} size={35} />
+          <FavoriteMovieBtn movie={movie} size={25} />
         </div>
         {!movie.poster_path && (
           <h3 className="text-white text-lg absolute bottom-2 left-3">

@@ -133,9 +133,13 @@ const Home: FC<HomeProps> = ({
       <div className="mt-6 grid grid-cols-1 gap-5">
         <h2 className="text-3xl font-bold pb-3">Newest Movies</h2>
         <UiHorizontalList>
-          {initialNewestMovies.map((movie) => (
-            <MovieCard movie={movie} key={movie.id} />
-          ))}
+          {initialNewestMovies ? (
+            initialNewestMovies.map((movie) => (
+              <MovieCard movie={movie} key={movie.id} />
+            ))
+          ) : (
+            <p>No data</p>
+          )}
         </UiHorizontalList>
       </div>
 
@@ -148,9 +152,13 @@ const Home: FC<HomeProps> = ({
           <div key={genreName}>
             <h2 className="text-3xl pb-5">{genreName} Movies</h2>
             <UiHorizontalList>
-              {moviesByGenre[genreName].map((movie) => (
-                <MovieCard movie={movie} key={movie.id} />
-              ))}
+              {moviesByGenre[genreName] ? (
+                moviesByGenre[genreName].map((movie) => (
+                  <MovieCard movie={movie} key={movie.id} />
+                ))
+              ) : (
+                <p>No data</p>
+              )}
             </UiHorizontalList>
           </div>
         ))}

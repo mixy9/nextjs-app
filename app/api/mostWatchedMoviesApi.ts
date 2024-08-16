@@ -1,10 +1,10 @@
 import api from './api'
 import { MoviesList } from '../types/movie'
 
-type Filters = {
-  releaseYear?: number
-  rating: number
-  genres?: string
+export type Filters = {
+  releaseYear?: number | undefined
+  rating: number | undefined
+  genres?: string | undefined
 }
 
 export type MostWatchedMoviesParams = {
@@ -19,7 +19,7 @@ export const getMostWatchedMovies = async ({
   try {
     const response = await api.get<MoviesList>('/discover/movie', {
       params: {
-        sort_by: 'popularity.asc',
+        sort_by: 'release_date.asc&popularity.asc',
         page,
         primary_release_year: filters.releaseYear,
         'vote_average.gte': filters.rating,

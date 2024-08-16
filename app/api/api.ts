@@ -8,7 +8,7 @@ const api = axios.create({
   params: {
     api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
     language: 'en-US',
-    watch_region: 'US', // US has more data
+    watch_region: 'US',
     include_adult: 'false',
   },
 })
